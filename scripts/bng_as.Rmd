@@ -1,0 +1,64 @@
+---
+title: "BNG Arsenic"
+author: "Chris Tasich"
+date: "December 7, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(tidyverse)
+```
+
+### Load and process As and XY data
+
+```{r load and process data}
+as.df = tbl_df(read.csv('../data/bamwsp.csv',header=T))
+
+xy.df = tbl_df(read.csv('../data/Mouza_25km.csv'))
+xy.df = rename(xy.df,geocode = GEO2,lon = X_COORD,lat = Y_COORD)
+
+data = left_join(as.df,xy.df,by='geocode')
+
+data = data %>%
+  filter(!is.na(lon)) %>%
+  filter(!is.na(lat)) %>%
+  select(arsenic_ppb,depth_ft,lon,lat) %>%
+  mutate(as_10 = as.factor(ifelse(arsenic_ppb>=10,1,0))) %>%
+  mutate(as_50 = as.factor(ifelse(arsenic_ppb>=50,1,0)))
+
+summary(data)
+```
+
+### Visualize the data
+
+```{r data plots}
+# Pairs plot with 10% of data
+data.sample = sample_frac(data,0.1,replace=F)
+pairs(data.sample~arsenic_ppb+depth_ft+lon+lat)
+
+# Removed obs with 0 ppb as concentration to better see rest of data
+data.sample1 = filter(data.sample,arsenic_ppb>0)
+plot(data.sample1$arsenic_ppb~data.sample1$depth_ft)
+
+# Histogram
+data.sample2 = filter(data,arsenic_ppb>0)
+hist(data.sample2$arsenic_ppb,breaks=60,xlab='As Concentration (ppb)',ylab='counts',col=2,main='Histogram of Non-Zero As Concentrations')
+```
+
+### Predict if new well is containinated with As
+
+#### Linear Regression
+
+```{r linear regression}
+set.seed(1)
+
+data.train = sample_frac(data,0.7,replace=F)
+data.test = setdiff(data,data.train)
+
+lm.fit = lm(arsenic_ppb~.,data=data.train)
+summary(lm.fit)
+```

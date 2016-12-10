@@ -1,0 +1,20 @@
+I. Intro to Bangladesh
+- groundwater problem
+- geologic controls
+- how to solve
+
+II. Lit review
+- what have others done?
+- geochemical model
+- not much statistical model - Van Geen and Gelman though!
+
+III. Methods
+- BAMWSP Dataset
+- Reconfigured data and added XY
+- Look at the data as vs depth, lat, lon
+- pairs plots?
+- Modeling - linear, trees, polys
+- report errors
+- best model uses As not log(As)
+- best model is tree
+- Classification

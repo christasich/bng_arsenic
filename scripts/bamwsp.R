@@ -174,11 +174,11 @@ rmse.all <- apply(model.results[,2:nmodels],2, rmse, obs=model.results[,1])
 
 ### PLOTS ###
 
+# Models with RMSE
 plot(rmse.all,xaxt='n',xlab='Model',ylab='RMSE',ylim=range(0:max(rmse.all)))
 axis(1,at=1:10,labels=names(rmse.all))
 points(5,rmse.all[5],col="red",cex=2,pch=20)
 
 # Best Model
-
 plot(rtree1, uniform=TRUE, main="Regression Tree for Arsenic Concentration")
 text(rtree1, all=TRUE, cex=.8)
